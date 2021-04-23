@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:component-scan base-package="com.mycomponents.*" use-default-filters="false">    <!-- use-default-filter == false doesn't work FIXED -->
+
+        <!-- annotation filters: -->
+        <context:include-filter type="annotation" expression="utils.MyAnno"/>
+         <context:include-filter type="annotation" expression="utils.MyAnno2"/>
+        <!-- aspectj filters: not supported yet -->
+        <context:include-filter type="aspectj" expression="com.mycomponents.included_by_filters.aspectj_filter.Bean2"/>
+        <context:include-filter type="aspectj" expression="*..aspectj_filter.Interf2+"/>
+
+        <!-- assignable filter: not supported yet FIXED -->
+        <context:include-filter type="assignable" expression="com.mycomponents.included_by_filters.assignable_filters.Bean3"/>
+        <context:include-filter type="assignable" expression="com.mycomponents.included_by_filters.assignable_filters.Interf3"/>
+
+        <!-- regexp filter: not supported yet FIXED -->
+        <context:include-filter type="regex" expression=".+\.Bean4.*"/>
+        <context:include-filter type="regex" expression=".+\.filteredComponents.Bean[0-9].*"/>
+
+        <!-- exclude filters: -->
+        <context:exclude-filter type="annotation" expression="utils.ExcludedAnno"/>
+        <context:exclude-filter type="assignable" expression="com.mycomponents.excluded_filters.ExType1" />
+        <context:exclude-filter type="aspectj" expression="*..excluded_filters.Bean6"/>
+
+    </context:component-scan>
+    <bean id="main" class="beans.MainBean">
+        <!-- standard components: should be excluded with use-default-filter==false -->
+        <!--<property name="comp1" ref="comp1"/>-->
+
+        <!-- annotation filters: -->
+        <property name="bean1" ref="bean1"/>
+        <property name="interf1" ref="interf1Impl"/>
+
+        <!-- aspectj filters: -->
+        <property name="bean2" ref="bean2"/>
+        <property name="interf2" ref="interf2Impl"/>
+
+        <!-- assignable filters: -->
+        <property name="bean3" ref="bean3"/>
+        <property name="i3" ref="interf3Impl"/>
+        <property name="b3child" ref="bean3Child"/>
+
+        <!-- regex filters: -->
+        <property name="bean4" ref="bean4"/>
+
+
+        <!-- assignable exclude filter: works properly-->
+        <!--<property name="bean5" ref="bean5"/>-->
+        <!-- aspectj exclude filter: should be excluded, but isn't-->
+        <!--<property name="bean6" ref="bean6"/>-->
+
+    </bean>
+</beans>
